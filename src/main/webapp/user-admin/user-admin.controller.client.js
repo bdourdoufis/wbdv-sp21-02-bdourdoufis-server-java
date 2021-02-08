@@ -36,25 +36,29 @@
         var lastName = $lastNameFld.val()
         var role = $roleFld.val()
 
-        var user = {
-            username: username,
-            password: password,
-            firstName: firstName,
-            lastName: lastName,
-            role: role
+        if (username === "" || password === "" || firstName === "" || lastName === "") {
+            window.alert("Invalid user information. All fields must be filled out to add a new user.")
+        } else {
+            var user = {
+                username: username,
+                password: password,
+                firstName: firstName,
+                lastName: lastName,
+                role: role
+            }
+
+            $usernameFld.val("")
+            $passwordFld.val("")
+            $firstNameFld.val("")
+            $lastNameFld.val("")
+
+            userService
+                .createUser(user)
+                .then(function (userResponse) {
+                    users.push(userResponse)
+                    renderUsers(users)
+                })
         }
-
-        $usernameFld.val("")
-        $passwordFld.val("")
-        $firstNameFld.val("")
-        $lastNameFld.val("")
-
-        userService
-            .createUser(user)
-            .then(function (userResponse) {
-                users.push(userResponse)
-                renderUsers(users)
-            })
     }
     function deleteUser(event) {
         var button = $(event.target)
@@ -69,7 +73,6 @@
             })
     }
     function selectUser(event) {
-        debugger;
         var button = $(event.target)
         var id = button.attr("id")
         userService.findUserById(id)
@@ -83,35 +86,44 @@
             })
     }
     function updateUser() {
-        if ($tbody.find('.wbdv-update').attr('id') != -1) {
+        if ($('.wbdv-update').attr('id') != -1) {
             var username = $usernameFld.val()
             var password = $passwordFld.val()
             var firstName = $firstNameFld.val()
             var lastName = $lastNameFld.val()
             var role = $roleFld.val()
 
-            var user = {
-                username: username,
-                password: password,
-                firstName: firstName,
-                lastName: lastName,
-                role: role
+            if (username === "" || password === "" || firstName === "" || lastName === "") {
+                window.alert("Invalid user information. User cannot be updated to store empty values.")
+            } else {
+
+                var user = {
+                    username: username,
+                    password: password,
+                    firstName: firstName,
+                    lastName: lastName,
+                    role: role,
+                    _nuid: "001642694",
+                    _domain: "users"
+                }
+
+                $usernameFld.val("")
+                $passwordFld.val("")
+                $firstNameFld.val("")
+                $lastNameFld.val("")
+
+                userService.updateUser($('.wbdv-update').attr('id'), user)
+                    .then(function (response) {
+                        userService.findAllUsers()
+                            .then(function (usersResponse) {
+                                users = usersResponse
+                                renderUsers(users)
+                                $('.wbdv-update').attr('id', '-1')
+                            })
+                    })
             }
-
-            $usernameFld.val("")
-            $passwordFld.val("")
-            $firstNameFld.val("")
-            $lastNameFld.val("")
-            debugger;
-
-            userService.updateUser($('.wbdv-update').attr('id'), user)
-                .then(function (response) {
-                    userService.findAllUsers()
-                        .then(function (usersResponse) {
-                            users = usersResponse
-                            renderUsers(users)
-                        })
-                })
+        } else {
+            window.alert("Must first select a user to edit before the record can be updated.")
         }
     }
     function renderUsers(users) {
@@ -121,7 +133,7 @@
             const rowClone = $userRowTemplate.clone();
             rowClone.removeClass('wbdv-hidden');
             rowClone.find('.wbdv-username').html(user.username);
-            rowClone.find('.wbdv-password').html(user.password);
+            rowClone.find('.wbdv-password').html("•".repeat(user.password.length));
             rowClone.find('.wbdv-first-name').html(user.firstName);
             rowClone.find('.wbdv-last-name').html(user.lastName);
             rowClone.find('.wbdv-role').html(user.role);
