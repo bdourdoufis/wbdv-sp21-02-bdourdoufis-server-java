@@ -55,18 +55,20 @@
         var button = $(event.target)
         var id = button.attr("id")
         userService.deleteUser(id)
-        userService.findAllUsers()
-            .then(function (usersResponse) {
-                users = usersResponse
-                renderUsers(users)
+            .then(function (response) {
+                userService.findAllUsers()
+                    .then(function (usersResponse) {
+                        users = usersResponse
+                        renderUsers(users)
+                    })
             })
     }
     function selectUser() {}
     //function updateUser() { … }
     function renderUsers(users) {
         $tbody.empty()
-        for(var u in users) {
-            const user = users[u]
+        for(var i = 0; i < users.length; i++) {
+            const user = users[i]
             const rowClone = $userRowTemplate.clone();
             rowClone.removeClass('wbdv-hidden');
             rowClone.find('.wbdv-username').html(user.username);
@@ -74,7 +76,7 @@
             rowClone.find('.wbdv-first-name').html(user.firstName);
             rowClone.find('.wbdv-last-name').html(user.lastName);
             rowClone.find('.wbdv-role').html(user.role);
-            rowClone.find('wbdv-remove').attr('id')
+            rowClone.find('.wbdv-remove').attr('id', user._id)
             $tbody.append(rowClone);
         }
         $('.wbdv-remove').click(deleteUser)
