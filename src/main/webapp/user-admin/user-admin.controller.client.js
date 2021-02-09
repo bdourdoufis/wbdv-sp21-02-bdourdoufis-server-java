@@ -1,7 +1,7 @@
 (function () {
     var $usernameFld, $passwordFld;
     var $firstNameFld, $lastNameFld, $roleFld;
-    var $removeBtn, $editBtn, $createBtn, $updateBtn;
+    var $createBtn, $updateBtn;
     var $userRowTemplate, $tbody;
     var userService = new AdminUserServiceClient();
     $(main);
